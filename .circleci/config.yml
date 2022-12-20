@@ -1,0 +1,35 @@
+version: 2.1
+executors:
+  docker:
+    docker:
+      - image: docker:stable
+jobs:
+  lint:
+    executor: docker
+    steps:
+      - checkout
+      - run:
+          name: lint-dockerfile
+          command: docker run --rm --interactive hadolint/hadolint < Dockerfile
+  build-and-test:
+    working_directory: ~/repo
+    docker:
+      - image: cimg/go:1.15.10
+    steps:
+      - checkout
+      - run:
+          name: test-app
+          command: go test -v -short --count=1 $(go list ./...)
+  deploy:
+    docker:
+      - image: circleci/node:8.11.1-stretch
+    steps:
+      - checkout
+      - run:
+          name: build-app-karsajobs
+          command: sh build_push_image_karsajobs.sh
+workflows:
+  version: 2
+  test:
+    jobs:
+      - lint
