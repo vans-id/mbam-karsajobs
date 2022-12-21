@@ -18,8 +18,8 @@ jobs:
       - run:
           name: build-app-karsajobs
           command: |
-            chmod +x build_push_image_karsajobs.sh
-            sh build_push_image_karsajobs.sh
+            chmod +x ./build_push_image_karsajobs.sh
+            sh ./build_push_image_karsajobs.sh
 workflows:
   version: 2
   build:
