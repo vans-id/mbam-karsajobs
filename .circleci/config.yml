@@ -17,8 +17,10 @@ jobs:
           command: go test -v -short --count=1 $(go list ./...)
   deploy:
     docker:
-      - image: docker:18.09-git
+      - image: docker:17.05.0-ce-git
     steps:
+      - checkout
+      - setup_remote_docker
       - run:
           name: build-app-karsajobs
           command: |
