@@ -33,9 +33,3 @@ workflows:
   build_and_test:
     jobs:
       - lint
-      - test
-          requires:
-            - build
-      - deploy
-          requires:
-            - test
