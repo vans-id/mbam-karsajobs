@@ -1,20 +1,20 @@
 version: 2.1
-executors:
-  docker:
-    docker:
-      - image: docker:stable
 jobs:
   lint:
-    executor: docker
+    docker:
+      - image: cimg/go:1.19.4
     steps:
       - checkout
       - run:
           name: lint-dockerfile
-          command: docker run --rm --interactive hadolint/hadolint < Dockerfile
-  build-and-test:
+          command: |
+            curl -ssl https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64
+            chmod +x /bin/hadolint
+            hadolint Dockerfile
+  test:
     working_directory: ~/repo
     docker:
-      - image: cimg/go:1.15.10
+      - image: cimg/go:1.19.4
     steps:
       - checkout
       - run:
@@ -22,7 +22,7 @@ jobs:
           command: go test -v -short --count=1 $(go list ./...)
   deploy:
     docker:
-      - image: circleci/node:8.11.1-stretch
+      - image: cimg/go:1.19.4
     steps:
       - checkout
       - run:
@@ -30,6 +30,12 @@ jobs:
           command: sh build_push_image_karsajobs.sh
 workflows:
   version: 2
-  test:
+  build_and_test:
     jobs:
       - lint
+      - test
+          requires:
+            - build
+      - deploy
+          requires:
+            - test
