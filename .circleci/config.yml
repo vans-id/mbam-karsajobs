@@ -25,7 +25,7 @@ jobs:
           name: build-app-karsajobs
           command: |
             docker build -t ghcr.io/vans-id/karsajobs:latest .
-            echo $GITHUB_TOKEN | docker login ghcr.io -u vans-id --password-stdin
+            docker login ghcr.io -u vans-id -p $GITHUB_TOKEN
             docker push ghcr.io/vans-id/karsajobs:latest
 workflows:
   version: 2
